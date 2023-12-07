@@ -4,25 +4,32 @@ import { Modal, Button, Alert } from 'react-bootstrap';
 
 const LibrosList = () => {
   const [libros, setLibros] = useState([]);
+  const [generos, setGeneros] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [libroSeleccionado, setLibroSeleccionado] = useState(null);
+  const [generoSeleccionado, setGeneroSeleccionado] = useState('');
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchLibros = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/libro');
-        setLibros(response.data.libros);
+        const responseLibros = await axios.get('http://localhost:3000/api/libro');
+        setLibros(responseLibros.data.libros);
+
+        const responseGeneros = await axios.get('http://localhost:3000/api/genero');
+        setGeneros(responseGeneros.data.generos);
       } catch (error) {
-        console.error('Error al obtener libros:', error);
+        console.error('Error al obtener libros o géneros:', error);
       }
     };
 
     fetchLibros();
   }, []);
 
+  // Filtrar libros por título y género
   const librosFiltrados = libros.filter(libro =>
-    libro.title.toLowerCase().includes(busqueda.toLowerCase())
+    libro.title.toLowerCase().includes(busqueda.toLowerCase()) &&
+    (generoSeleccionado ? libro.genero === generoSeleccionado : true)
   );
 
   const handleClickLibro = (libro) => {
@@ -45,6 +52,22 @@ const LibrosList = () => {
           onChange={(e) => setBusqueda(e.target.value)}
         />
       </div>
+
+      <div className="mb-3">
+        <label htmlFor="generoSelect" className="form-label">Seleccionar Género</label>
+        <select
+          id="generoSelect"
+          className="form-select"
+          value={generoSeleccionado}
+          onChange={(e) => setGeneroSeleccionado(e.target.value)}
+        >
+          <option value="">Todos los géneros</option>
+          {generos.map((genero) => (
+            <option key={genero._id} value={genero.nombre}>{genero.nombre}</option>
+          ))}
+        </select>
+      </div>
+
       <div className="row row-cols-1 row-cols-md-3 g-4">
         {librosFiltrados.length > 0 ? (
           librosFiltrados.map((libro) => (

@@ -6,7 +6,6 @@ const LibroPage = () => {
   return (
     <div>
         <div className='container'>    <Nav></Nav></div>
-
       <LibroList />
 
     </div>
