@@ -26,7 +26,6 @@ const LibrosList = () => {
     fetchLibros();
   }, []);
 
-  // Filtrar libros por título y género
   const librosFiltrados = libros.filter(libro =>
     libro.title.toLowerCase().includes(busqueda.toLowerCase()) &&
     (generoSeleccionado ? libro.genero === generoSeleccionado : true)
